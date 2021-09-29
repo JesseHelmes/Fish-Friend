@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+license="Creative Commons"
+
+[[mods]]
+modId="fishfriend"
+version="1.0"
+displayName="Fish Friend"
+credits="Thanks for all my subscribers and ilja615 for being cool." 
+authors="By Silly Silverwing."
+description='''
+This mod needs a description.
+
+Title: Fish is now a weapon?
+Desc: kill someone with a fish
+Set attack damage 
+Dead dead bushes: black dead bush.
+Fish friend
+By silly Silverwing
+You can use your fish as weapon when you hold it.
+You can eat it and you will even get a advancement for it.
+You can tame it like a dog.
+It will fight with you if you are in the same water.
+You can pick it up by right click.
+And put it in water or ground by placing it.
+It won't take damage from being out of the water if it has a owner.
+You get horrible achievements for killing your fish friend.
+It will swim like other fish, but then as a item.
+Extra: fish slap sound when you hit an entity. 
+'''
