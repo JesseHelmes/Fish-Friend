@@ -1,0 +1,36 @@
+{
+	"parent": "minecraft:adventure/root",
+	"display": {
+		"icon": {
+			"item": "fishfriend:fish"
+		},
+		"title": {
+			"translate": "advancements.adventure.consume_fish_item.title"
+		},
+		"description": {
+			"translate": "advancements.adventure.consume_fish_item.description"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"criteria": {
+		"consume_fish_item": {
+			"trigger": "minecraft:consume_item",
+			"conditions": {
+				"item": {
+					"item": "fishfriend:fish"
+				}
+			}
+		}
+	},
+	"requirements": [
+		[
+			"consume_fish_item"
+		]
+	],
+	"rewards": {
+		"experience": 100
+	}
+}
