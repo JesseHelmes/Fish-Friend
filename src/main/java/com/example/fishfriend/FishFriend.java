@@ -2,8 +2,12 @@ package com.example.fishfriend;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.passive.fish.CodEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -14,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.example.fishfriend.client.entity.render.FishEntityRender;
+import com.example.fishfriend.common.item.FishItem;
 import com.example.fishfriend.common.item.ModSpawnEggItem;
 import com.example.fishfriend.core.init.EntityTypeInit;
 import com.example.fishfriend.core.init.ItemInit;
@@ -198,22 +203,22 @@ minecraft:villager_trade
 public class FishFriend {
 	// Directly reference a log4j logger.
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String MOD_ID = "fishfriend";
 
 	public FishFriend() {
 		// Register the setup method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
+		//FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		//FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
 
 		ItemInit.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-		EntityTypeInit.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+		//EntityTypeInit.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public void setupClient(FMLClientSetupEvent event) {
+	private void setupClient(FMLClientSetupEvent event) {
 		RenderingRegistry.registerEntityRenderingHandler(EntityTypeInit.FISH.get(), FishEntityRender::new);
 	}
 
@@ -249,8 +254,36 @@ public class FishFriend {
 	 */
 
 	@SubscribeEvent
-	public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event) {
+	public void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event) {
 		ModSpawnEggItem.initSpawnEggs();
+	}
+
+	// i added this to test my fish entity pick up as item, but then with a Cod
+	// because i was unable to
+	// use a item as entity modal and so i tried to make as much as possible for the
+	// future
+	@SubscribeEvent
+	public void rightClickFish(PlayerInteractEvent.EntityInteract event) {
+		if (!(event.getTarget() instanceof CodEntity)) {
+			return;
+		}
+		PlayerEntity player = event.getPlayer();
+		if (!player.inventory.getCurrentItem().equals(ItemStack.EMPTY)) {
+			return;
+		}
+
+		CodEntity cod = (CodEntity) event.getTarget();
+
+		FishItem fishItem = ItemInit.FISH.get();
+		fishItem.setFishType(cod.getType());
+		ItemStack itemStackReplacer = new ItemStack(fishItem.asItem());
+		// renames our fish item with custom name from entity
+		if(cod.hasCustomName()) {
+			itemStackReplacer.setDisplayName(cod.getCustomName());
+		}
+		int slot = player.inventory.currentItem;
+		player.inventory.setInventorySlotContents(slot, itemStackReplacer);
+		cod.remove();
 	}
 
 }

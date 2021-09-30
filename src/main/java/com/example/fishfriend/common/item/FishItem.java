@@ -1,5 +1,6 @@
 package com.example.fishfriend.common.item;
 
+import com.example.fishfriend.FishFriend;
 import com.example.fishfriend.core.init.ItemInit;
 import com.example.fishfriend.entity.passive.FishEntity;
 import com.google.common.collect.ImmutableMultimap;
@@ -16,6 +17,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.fish.AbstractFishEntity;
+import net.minecraft.entity.passive.fish.CodEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IItemTier;
@@ -23,8 +25,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.TieredItem;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -33,8 +41,8 @@ public class FishItem extends TieredItem implements IVanishable {
 	private final float attackDamage;
 	/** Modifiers applied when the item is in the mainhand of a user. */
 	private final Multimap<Attribute, AttributeModifier> attributeModifiers;
-	// private EntityType<FishEntity> fishEntity;
-	private FishEntity fishEntity = null;
+	// private FishEntity fishEntity = null;
+	private EntityType<?> fishEntity = EntityType.COD;
 
 	public FishItem(IItemTier tierIn, float attackDamageIn, float attackSpeedIn, Item.Properties builderIn) {
 		super(tierIn, builderIn);
@@ -93,37 +101,59 @@ public class FishItem extends TieredItem implements IVanishable {
 		return ActionResultType.PASS;
 	}
 
-	public void onLiquidPlaced(World worldIn, ItemStack p_203792_2_, BlockPos pos) {
-		if (worldIn instanceof ServerWorld) {
-			this.placeFish((ServerWorld) worldIn, p_203792_2_, pos);
-		}
+	/**
+	 * Called to trigger the item's "innate" right click behavior. To handle when
+	 * this item is used on a Block, see {@link #onItemUse}.
+	 */
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
+		RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.SOURCE_ONLY);
+		if (raytraceresult.getType() != RayTraceResult.Type.BLOCK) {
+			return super.onItemRightClick(worldIn, playerIn, handIn);
+		} else if (!(worldIn instanceof ServerWorld)) {
+			return ActionResult.resultSuccess(itemstack);
+		} else {
+			BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) raytraceresult;
+			BlockPos blockpos = blockraytraceresult.getPos();
+			if (worldIn.isBlockModifiable(playerIn, blockpos)
+					&& playerIn.canPlayerEdit(blockpos, blockraytraceresult.getFace(), itemstack)) {
+				if (this.placeFish((ServerWorld) worldIn, itemstack, blockpos) == null) {
+					return ActionResult.resultPass(itemstack);
+				} else {
+					if (!playerIn.abilities.isCreativeMode) {
+						itemstack.shrink(1);
+					}
 
+					playerIn.addStat(Stats.ITEM_USED.get(this));
+					return ActionResult.resultConsume(itemstack);
+				}
+			} else {
+				return ActionResult.resultFail(itemstack);
+			}
+		}
 	}
 
-	private void placeFish(ServerWorld worldIn, ItemStack stack, BlockPos pos) {
-		Entity entity = this.getFish().spawn(worldIn, stack, (PlayerEntity) null, pos, SpawnReason.BUCKET, true, false);
+	private Entity placeFish(ServerWorld worldIn, ItemStack stack, BlockPos pos) {
+		Entity entity = this.getFishType().spawn(worldIn, stack, (PlayerEntity) null, pos, SpawnReason.SPAWN_EGG, true,
+				false);
 		if (entity != null) {
+			//updates the name of the entity with the name of the item
+			if(stack.hasDisplayName()) {
+				entity.setCustomName(stack.getDisplayName());
+			}
 			((AbstractFishEntity) entity).setFromBucket(true);
 		}
 
+		return entity;
 	}
 
-	public void setFish(FishEntity fishEntity) {
+	// FishEntity fishEntity
+	public void setFishType(EntityType<?> fishEntity) {
 		this.fishEntity = fishEntity;
-		// renames our fish with custom name from entity
-		if (this.getDisplayName(this.getDefaultInstance()) != this.fishEntity.getCustomName()) {
-			this.getDefaultInstance().setDisplayName(this.fishEntity.getCustomName());
-		}
 	}
 
-	public EntityType<?> getFish() {
-		// set custom name before returning fishEntity
-		if (this.getDisplayName(this.getDefaultInstance()) != this
-				.getDisplayName(ItemInit.FISH.get().getDefaultInstance())) {
-			this.fishEntity.setCustomName(this.getDisplayName(this.getDefaultInstance()));
-		}
-
-		return this.fishEntity.getType();
+	public EntityType<?> getFishType() {
+		return this.fishEntity;
 	}
 
 }
