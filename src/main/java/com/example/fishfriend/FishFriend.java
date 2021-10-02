@@ -22,6 +22,7 @@ import com.example.fishfriend.common.item.FishItem;
 import com.example.fishfriend.common.item.ModSpawnEggItem;
 import com.example.fishfriend.core.init.EntityTypeInit;
 import com.example.fishfriend.core.init.ItemInit;
+import com.example.fishfriend.core.init.SoundsInit;
 import com.example.fishfriend.entity.passive.FishEntity;
 
 // https://github.com/Silverminer007/MoreOre-1.16/blob/99ce3bd0ef8fb48ef394d841fb4bf138046e27c7/src/main/java/com/silverminer/moreore/util/CommonEvents.java#L112
@@ -145,7 +146,7 @@ entity naar item: test
  */
 
 /*
- * ADVENCEMENTS
+ * TODO ADVENCEMENTS
  * 
  * Advancement
  * 
@@ -208,11 +209,12 @@ public class FishFriend {
 
 	public FishFriend() {
 		// Register the setup method for modloading
-		//FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		//FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
+		// FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		// FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
 
 		ItemInit.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-		//EntityTypeInit.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+		// EntityTypeInit.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+		SoundsInit.SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
@@ -278,7 +280,7 @@ public class FishFriend {
 		fishItem.setFishType(cod.getType());
 		ItemStack itemStackReplacer = new ItemStack(fishItem.asItem());
 		// renames our fish item with custom name from entity
-		if(cod.hasCustomName()) {
+		if (cod.hasCustomName()) {
 			itemStackReplacer.setDisplayName(cod.getCustomName());
 		}
 		int slot = player.inventory.currentItem;

@@ -20,12 +20,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ItemInit {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			FishFriend.MOD_ID);
-	//it needs a maxStackSize because else the item will disappear when you used setInventorySlotContents to get this item
+	//it needs a maxStackSize because else the item will disappear after you used setInventorySlotContents to get the item
 
-	// fish itself comes here
 //	/.food(Foods.COD)
 	public static final RegistryObject<FishItem> FISH = ITEMS.register("fish",
-	() -> new FishItem(ItemTier.DIAMOND, 100.5F, -3.0F,// damage 2.0F
+	() -> new FishItem(ItemTier.DIAMOND, 2.0F, -3.0F,// damage 2.0F // damage 100.5F
 			(new Item.Properties()).group(ItemGroup.MISC).food(Foods.COD).maxStackSize(1)));
 
 	//https://github.com/TeamMetallurgy/Aquaculture/blob/master/src/main/java/com/teammetallurgy/aquaculture/init/AquaItems.java
@@ -37,6 +36,7 @@ public class ItemInit {
 	//6987410, 5932668
 	//0x6A9E92, 0x5A867C
 	//() -> EntityTypeInit.FISH.get()
+	//somehow the spawn egg has no texture
 //	public static final RegistryObject<ModSpawnEggItem> FISH_SPAWN_EGG = ITEMS.register("fish_spawn_egg",
 //			() -> new ModSpawnEggItem(EntityTypeInit.FISH, 0xFF329F, 0x16777119,
 //					(new Item.Properties().group(ItemGroup.MISC))));

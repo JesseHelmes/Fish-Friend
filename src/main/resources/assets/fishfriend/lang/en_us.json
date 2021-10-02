@@ -5,5 +5,6 @@
 	"advancements.adventure.player_killed_entity_with_fish.title": "Fish is now a weapon?",
 	"advancements.adventure.player_killed_entity_with_fish.description": "Kill someone with a Fish",
 	"advancements.adventure.consume_fish_item.title": "How could you?!",
-	"advancements.adventure.consume_fish_item.description": "Eat a Fish"
+	"advancements.adventure.consume_fish_item.description": "Eat a Fish",
+	"subtitles.item.fish.slap": "Fish slap"
 }

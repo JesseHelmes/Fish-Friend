@@ -1,6 +1,6 @@
 {
 	"parent": "item/handheld",
 	"textures": {
-		"layer0": "fishfriend:items/fish2"
+		"layer0": "fishfriend:items/fish"
 	}
 }

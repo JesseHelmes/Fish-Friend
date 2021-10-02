@@ -1,0 +1,12 @@
+{
+	"item.fish.slap": {
+		"category": "item",
+		"subtitle": "subtitles.item.fish.slap",
+		"sounds": [
+			{
+				"name": "fishfriend:item/fish/slap",
+				"stream": true
+			}
+		]
+	}
+}

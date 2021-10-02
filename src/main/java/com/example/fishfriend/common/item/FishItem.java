@@ -1,8 +1,6 @@
 package com.example.fishfriend.common.item;
 
-import com.example.fishfriend.FishFriend;
-import com.example.fishfriend.core.init.ItemInit;
-import com.example.fishfriend.entity.passive.FishEntity;
+import com.example.fishfriend.core.init.SoundsInit;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
@@ -17,7 +15,6 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.fish.AbstractFishEntity;
-import net.minecraft.entity.passive.fish.CodEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IItemTier;
@@ -65,6 +62,11 @@ public class FishItem extends TieredItem implements IVanishable {
 	 */
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		// https://minecraft.fandom.com/wiki/Player "sounds"
+		// The pitch of a sound is how high or low the sound is.
+		// plays sound on hitting entity with our fish item
+		attacker.world.playSound((PlayerEntity) null, target.getPosX(), target.getPosY(), target.getPosZ(),
+				SoundsInit.FISH_ITEM_SLAP.get(), attacker.getSoundCategory(), 1.75F, 0F);
 		stack.damageItem(0, attacker, (entity) -> {
 			entity.sendBreakAnimation(EquipmentSlotType.MAINHAND);
 		});
@@ -109,6 +111,7 @@ public class FishItem extends TieredItem implements IVanishable {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.SOURCE_ONLY);
 		if (raytraceresult.getType() != RayTraceResult.Type.BLOCK) {
+			/// this causes the user to use the item as food.
 			return super.onItemRightClick(worldIn, playerIn, handIn);
 		} else if (!(worldIn instanceof ServerWorld)) {
 			return ActionResult.resultSuccess(itemstack);
@@ -137,8 +140,8 @@ public class FishItem extends TieredItem implements IVanishable {
 		Entity entity = this.getFishType().spawn(worldIn, stack, (PlayerEntity) null, pos, SpawnReason.SPAWN_EGG, true,
 				false);
 		if (entity != null) {
-			//updates the name of the entity with the name of the item
-			if(stack.hasDisplayName()) {
+			// updates the name of the entity with the name of the item
+			if (stack.hasDisplayName()) {
 				entity.setCustomName(stack.getDisplayName());
 			}
 			((AbstractFishEntity) entity).setFromBucket(true);
