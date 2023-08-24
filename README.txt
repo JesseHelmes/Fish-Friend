@@ -51,3 +51,27 @@ https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
 
 For more details update more often refer to the Forge Forums:
 http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
+
+
+This mod was never finished and the idea came because of Derp that holds fish with is his friend and use as weapon sometimes
+
+
+Features
+- Items
+	- Fish
+		- can be eaten, is same as Cod
+		- when right click block it will spawn the fish with the current item custom name if it has one
+		- when right click and not aiming a block, you will eat it
+- Entities
+	- Fish
+		- when right click entity it will disappear and you hold a fish as item with the current entity custom name if it has one
+
+
+Planned features
+- when updating to new version remove MobSpawnEggItem as Forge has this
+- spawn egg
+- simple swimming fish instead of a retextured Cod
+
+Known bugs
+- i think the splash sound played at same time as sword hit when hitting entity
+
